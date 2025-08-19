@@ -1,16 +1,28 @@
 import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GithubProvider from "next-auth/providers/github";
 import dbConnect from "@/utils/dbConnect";
 import UserModel from "@/model/user";
 import bcrypt from "bcryptjs";
+import clientPromise from "@/utils/mongodb";
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 
 interface LoginCredentials {
   email: string;
   password: string;
 }
 
+if (!process.env.GITHUB_ID || !process.env.GITHUB_SECRET) {
+  throw new Error("Missing GITHUB ID or Secret");
+}
+
 export const authOptions: NextAuthOptions = {
+  adapter: MongoDBAdapter(clientPromise),
   providers: [
+    GithubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -66,6 +78,17 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  events: {
+    async createUser({ user }) {
+      await dbConnect();
+
+      await UserModel.findByIdAndUpdate(user.id, {
+        name: user.name,
+        email: user.email,
+        image: user.image,
+      });
+    },
+  },
 
   callbacks: {
     async jwt({ token, user }) {
