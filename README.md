@@ -1,5 +1,5 @@
 # Next-Auth Credentials
-- ## Signup/Login with Email/Password
+- ## Signup/Login with Email/Password/Github/Google
 - ## Email verification with OTP
 - ## Password Reset
 - ## MongoDB implementation
