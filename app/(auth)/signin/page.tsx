@@ -143,6 +143,18 @@ const SignInPage = () => {
             </Link>
           </div>
         </div>
+        <div className="flex items-center justify-between">
+          <hr className="w-full border-gray-300" />
+          <span className="px-3 text-sm text-gray-500">or</span>
+          <hr className="w-full border-gray-300" />
+        </div>
+
+        <Button
+          onClick={() => signIn("github", { callbackUrl: "/" })}
+          className="w-full bg-black hover:bg-gray-800 text-white py-2 text-lg"
+        >
+          Sign in with Github
+        </Button>
       </div>
     </div>
   );
